@@ -1,0 +1,18 @@
+[package]
+name = "can-bit-timings"
+version = "0.1.0"
+authors = ["delphi <cpp.create@gmail.com>"]
+edition = "2018"
+
+
+[[test]]
+name = "tests"
+path = "tests/progress.rs"
+
+[dev-dependencies]
+trybuild = { version = "1.0", features = ["diff"] }
+assert_hex = "0.2.2"
+
+[dependencies]
+can-bit-timings-core = { path = "core" }
+can-bit-timings-proc-macro = { path = "proc-macro" }
