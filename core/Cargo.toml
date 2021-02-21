@@ -1,6 +1,6 @@
 [package]
 name = "can-bit-timings-core"
-version = "0.0.0"
+version = "1.0.0"
 authors = ["Pavel Pletenev <cpp.create@gmail.com>"]
 edition = "2018"
 license-file = "../LICENSE"
