@@ -1,9 +1,14 @@
 [package]
 name = "can-bit-timings"
-version = "0.1.0"
+version = "0.0.0"
 authors = ["delphi <cpp.create@gmail.com>"]
 edition = "2018"
-
+license-file = "LICENSE"
+description = "This is a procedural macro to calculate CAN bus timings"
+documentation = "https://docs.rs/can-bit-timings"
+repository = "https://github.com/ASMfreaK/can_bit_timings"
+categories = [ "embedded", "no-std", "config" ]
+keywords = ["can-bus", "convenience"]
 
 [[test]]
 name = "tests"
@@ -14,5 +19,12 @@ trybuild = { version = "1.0", features = ["diff"] }
 assert_hex = "0.2.2"
 
 [dependencies]
-can-bit-timings-core = { path = "core" }
-can-bit-timings-proc-macro = { path = "proc-macro" }
+can-bit-timings-core = { version = "0.0.0", path = "core" }
+can-bit-timings-proc-macro = { version = "0.0.0", path = "proc-macro" }
+
+[workspace]
+members = [
+    ".",
+    "core",
+    "proc-macro",
+]
