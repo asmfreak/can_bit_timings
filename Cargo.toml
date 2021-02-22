@@ -1,6 +1,6 @@
 [package]
 name = "can-bit-timings"
-version = "1.0.2"
+version = "1.1.0"
 authors = ["Pavel Pletenev <cpp.create@gmail.com>"]
 edition = "2018"
 license = "MPL-2.0"
@@ -20,8 +20,8 @@ trybuild = { version = "1.0", features = ["diff"] }
 assert_hex = "0.2.2"
 
 [dependencies]
-can-bit-timings-core = { version = "1.0.0", path = "core" }
-can-bit-timings-proc-macro = { version = "1.0.0", path = "proc-macro" }
+can-bit-timings-core = { version = "1.1.0", path = "core" }
+can-bit-timings-proc-macro = { version = "1.1.0", path = "proc-macro" }
 
 [workspace]
 members = [

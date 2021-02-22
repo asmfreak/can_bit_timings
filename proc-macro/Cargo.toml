@@ -1,6 +1,6 @@
 [package]
 name = "can-bit-timings-proc-macro"
-version = "1.0.1"
+version = "1.1.0"
 authors = ["Pavel Pletenev <cpp.create@gmail.com>"]
 edition = "2018"
 license = "MPL-2.0"
@@ -22,4 +22,4 @@ proc-macro-error = "1.0"
 
 [dependencies.can-bit-timings-core]
 path = "../core"
-version = "1.0.0"
+version = "1.1.0"

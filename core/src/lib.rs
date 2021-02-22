@@ -37,6 +37,7 @@ pub struct CanBitTiming {
     pub prescaler: u16
 }
 
+
 impl CanBitTiming {
     /// Converts [CanBitTiming] struct to a `u32` register
     /// as used by bxcan module.
