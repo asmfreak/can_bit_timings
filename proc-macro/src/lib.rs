@@ -12,10 +12,7 @@ extern crate proc_macro;
 use can_bit_timings_core::CanBitTiming;
 use proc_macro::TokenStream;
 use proc_macro_error::{abort, abort_call_site, proc_macro_error};
-use syn::{
-    Expr, ExprLit, ExprMethodCall, ExprAssign, ExprPath,
-    Lit,
-    Ident, Token, parse_macro_input};
+use syn::{Expr, ExprAssign, ExprLit, ExprMethodCall, ExprPath, Ident, Lit, Token, parse_macro_input, spanned::Spanned};
 use syn::parse::{Parse, ParseStream, Result};
 use syn::punctuated::Punctuated;
 use quote::quote;
@@ -176,16 +173,16 @@ impl TryFrom<&Expr> for Frequency{
 impl TryFrom<&Expr> for Ratio{
     type Error = syn::Error;
     fn try_from(value: &Expr) -> Result<Self>{
-        Ok(match value {
+        match value {
             Expr::Lit(ExprLit{lit,..}) => {
                 match lit {
-                    Lit::Int(lit) => Self(lit.base10_parse::<u32>()? as f64),
-                    Lit::Float(lit) => Self(lit.base10_parse()?),
-                    _ => abort!(lit, "Expected int or float literal")
+                    Lit::Int(lit) => Ok(Self(lit.base10_parse::<u32>()? as f64)),
+                    Lit::Float(lit) => Ok(Self(lit.base10_parse()?)),
+                    _ => Err(syn::Error::new(lit.span(), "Expected int or float literal"))
                 }
             }
-            _ => {abort!(value, "Expected int or float literal");}
-        })
+            _ => Err(syn::Error::new(value.span(), "Expected int or float literal"))
+        }
     }
 }
 
@@ -259,7 +256,41 @@ impl Parse for CanBits {
     }
 }
 
-
+/// This macro generates bit timings struct for provided input frequency 
+/// and output baudrate.
+/// 
+/// **Inputs**:
+/// - *required positional argument:* input clock frequency in Hertz
+/// - *required positional argument:* output baudrate in Hertz
+/// - *optional named argument* **midpoint** - BS2 segment ratio (default is 0.175)
+/// - *optional named argument* **tolerance** - error tolerance (default is 0.5%)
+///
+/// **Outputs** [can_bit_timings_core::CanBitTiming] struct into the invocation site.
+/// 
+/// Frequency can be specified as number or as 
+/// a method  calls (`.mhz()`, `.khz()`, `.hz()`, `.bps()`). 
+/// Percents are specified as a ratio (from 0 to 1.0) 
+/// or as a method call (from `0.pct()` to `100.pct()`)
+///
+/// ```
+/// # use can_bit_timings_proc_macro::can_timings;
+/// # use can_bit_timings_core::CanBitTiming;
+/// let timing = can_timings!(10.mhz(), 1.mhz());
+/// assert_eq!(
+///     timing, 
+///     CanBitTiming{sjw: 1, bs1: 8, bs2: 1, prescaler: 1}
+/// );
+/// let timing = can_timings!(10_000_000, 125.khz());
+/// assert_eq!(
+///     timing, 
+///     CanBitTiming{sjw: 1, bs1: 16, bs2: 3, prescaler: 4}
+/// );
+/// let timing = can_timings!(10_000_000, 125.khz(), midpoint=0.275, tolerance=0.1.pct());
+/// assert_eq!(
+///     timing, 
+///     CanBitTiming{sjw: 1, bs1: 14, bs2: 5, prescaler: 4}
+/// );
+/// ```
 #[proc_macro_error]
 #[proc_macro]
 pub fn can_timings(item: TokenStream) -> TokenStream {
@@ -274,6 +305,31 @@ pub fn can_timings(item: TokenStream) -> TokenStream {
     }))
 }
 
+/// This macro generates `u32` register for bxcan for provided input frequency 
+/// and output baudrate.
+/// 
+/// **Inputs**:
+/// - *required positional argument:* input clock frequency in Hertz
+/// - *required positional argument:* output baudrate in Hertz
+/// - *optional named argument* **midpoint** - BS2 segment ratio (default is 0.175)
+/// - *optional named argument* **tolerance** - error tolerance (default is 0.5%)
+///
+/// **Outputs** u32 into the invocation site.
+/// 
+/// Frequency can be specified as number or as 
+/// a method  calls (`.mhz()`, `.khz()`, `.hz()`, `.bps()`). 
+/// Percents are specified as a ratio (from 0 to 1.0) 
+/// or as a method call (from `0.pct()` to `100.pct()`)
+///
+/// ```
+/// # use can_bit_timings_proc_macro::can_timings_bxcan;
+/// let timing = can_timings_bxcan!(10.mhz(), 1.mhz());
+/// assert_eq!(timing, 0x70000);
+/// let timing = can_timings_bxcan!(10_000_000, 125.khz());
+/// assert_eq!(timing, 0x2f0003);
+/// let timing = can_timings_bxcan!(10_000_000, 125.khz(), midpoint=0.275, tolerance=0.1.pct());
+/// assert_eq!(timing, 0x4d0003);
+/// ```
 #[proc_macro_error]
 #[proc_macro]
 pub fn can_timings_bxcan(item: TokenStream) -> TokenStream {

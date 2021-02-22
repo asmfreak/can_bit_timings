@@ -1,9 +1,9 @@
 [package]
 name = "can-bit-timings-proc-macro"
 version = "1.0.0"
-authors = ["delphi <cpp.create@gmail.com>"]
+authors = ["Pavel Pletenev <cpp.create@gmail.com>"]
 edition = "2018"
-license-file = "../LICENSE"
+license = "MPL-2.0"
 description = "This package is a common dependency for can-bit-timings and can-bit-timings-proc-macro"
 documentation = "https://docs.rs/can-bit-timings-proc-macro"
 repository = "https://github.com/ASMfreaK/can_bit_timings"
