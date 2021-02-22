@@ -1,3 +1,4 @@
+#![no_std]
 /*
  * Copyright (c) 2021, Pavel Pletenev
  *
